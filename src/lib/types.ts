@@ -21,7 +21,7 @@ export interface TodoState {
 }
 
 export type TodoAction = 
-  | { type: 'ADD_TODO'; payload: Omit<Todo, 'id' | 'createdDate' | 'order'> }
+  | { type: 'ADD_TODO'; payload: Partial<Omit<Todo, 'id' | 'createdDate' | 'order'>> & { title: string } }
   | { type: 'UPDATE_TODO'; payload: { id: string; updates: Partial<Todo> } }
   | { type: 'DELETE_TODO'; payload: string }
   | { type: 'COMPLETE_TODO'; payload: string }

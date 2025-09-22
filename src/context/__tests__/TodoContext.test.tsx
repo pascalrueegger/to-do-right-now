@@ -20,6 +20,16 @@ jest.mock('../../hooks/useLocalStorage', () => ({
   })),
 }));
 
+// Helper function to create complete todo payload
+const createTodoPayload = (overrides: Partial<Omit<Todo, 'id' | 'createdDate' | 'order'>> = {}) => ({
+  title: 'Test Todo',
+  description: 'Test description',
+  priority: DEFAULT_PRIORITY,
+  tags: [],
+  color: DEFAULT_TODO_COLOR,
+  ...overrides,
+});
+
 // Test wrapper component
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <TodoProvider>{children}</TodoProvider>
@@ -76,13 +86,13 @@ describe('TodoContext', () => {
       act(() => {
         result.current.dispatch({
           type: 'ADD_TODO',
-          payload: {
+          payload: createTodoPayload({
             title: 'New Todo',
             description: 'New description',
             priority: 'high',
             tags: ['work'],
             color: '#ff0000',
-          },
+          }),
         });
       });
 

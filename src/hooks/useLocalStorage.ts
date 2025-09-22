@@ -257,13 +257,13 @@ export const useLocalStorage = (): UseLocalStorageReturn => {
     const serializedTodos = todos.map(serializeTodo);
     const updatedData: StorageData = {
       todos: serializedTodos,
-      settings: {
+      settings: data?.settings || {
         lastOpenedDrawer: false
       }
     };
 
     await setData(updatedData);
-  }, [setData]);
+  }, [setData, data?.settings]);
 
   // Remove data
   const removeData = useCallback(async (): Promise<void> => {

@@ -42,12 +42,34 @@ const mockTodoLowPriority: Todo = {
 };
 
 const defaultMockReturn = {
-  currentTodo: null,
-  incompleteTodos: [],
-  completedTodos: [],
+  // State
   todos: [],
+  currentTodo: null,
+  isDrawerOpen: false,
+  
+  // Computed values
+  completedTodos: [],
+  incompleteTodos: [],
+  todosByPriority: {
+    high: [],
+    medium: [],
+    low: [],
+  },
+  
+  // Actions
+  addTodo: jest.fn(),
+  updateTodo: jest.fn(),
+  deleteTodo: jest.fn(),
   completeTodo: jest.fn(),
+  reorderTodos: jest.fn(),
+  sortByPriority: jest.fn(),
   toggleDrawer: jest.fn(),
+  setCurrentTodo: jest.fn(),
+  
+  // Utility functions
+  getTodoById: jest.fn(),
+  getNextTodo: jest.fn(),
+  getPreviousTodo: jest.fn(),
 };
 
 describe('DoingView', () => {

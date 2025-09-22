@@ -5,7 +5,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { useTodoContext } from '../context/TodoContext';
-import { Todo } from '../lib/types';
+import { Todo, TodoStatus } from '../lib/types';
 
 export interface UseTodosReturn {
   // State
@@ -23,7 +23,7 @@ export interface UseTodosReturn {
   };
   
   // Actions
-  addTodo: (todo: Omit<Todo, 'id' | 'createdDate' | 'order'>) => void;
+  addTodo: (todo: Partial<Omit<Todo, 'id' | 'createdDate' | 'order'>> & { title: string }) => void;
   updateTodo: (id: string, updates: Partial<Todo>) => void;
   deleteTodo: (id: string) => void;
   completeTodo: (id: string) => void;
@@ -67,7 +67,7 @@ export const useTodos = (): UseTodosReturn => {
   }, [state.todos]);
 
   // Action creators
-  const addTodo = useCallback((todo: Omit<Todo, 'id' | 'createdDate' | 'order'>) => {
+  const addTodo = useCallback((todo: Partial<Omit<Todo, 'id' | 'createdDate' | 'order'>> & { title: string }) => {
     dispatch({ type: 'ADD_TODO', payload: todo });
   }, [dispatch]);
 
