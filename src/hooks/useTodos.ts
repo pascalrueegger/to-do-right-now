@@ -5,7 +5,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { useTodoContext } from '../context/TodoContext';
-import { Todo, TodoStatus } from '../lib/types';
+import { Todo } from '../lib/types';
 
 export interface UseTodosReturn {
   // State

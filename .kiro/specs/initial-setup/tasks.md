@@ -47,7 +47,7 @@
   - Write unit tests for doing view behavior and task completion flow
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 5.1, 5.2_
 
-- [ ] 7. Build the planning drawer interface
+- [x] 7. Build the planning drawer interface
   - Create PlanningDrawer component using shadcn/ui drawer/sheet component
   - Implement slide-in animation from left side with backdrop
   - Add drawer toggle button with highlighted state when no todos exist
