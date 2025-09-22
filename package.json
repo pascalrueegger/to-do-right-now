@@ -2,6 +2,11 @@
   "name": "to-do-right-now",
   "version": "1.0.0",
   "description": "A minimalist todo app focussing on the right now",
+  "packageManager": "bun@1.2.21",
+  "engines": {
+    "bun": ">=1.2.0",
+    "node": ">=18.0.0"
+  },
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
@@ -44,10 +49,10 @@
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.5.2",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
-    "@types/jest": "^30.0.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.36.0",
     "eslint-config-next": "^15.5.3",

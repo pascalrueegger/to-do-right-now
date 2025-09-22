@@ -30,7 +30,7 @@
   - Write unit tests for state management and reducer functions
   - _Requirements: 3.1, 3.2, 5.1, 5.2, 5.3_
 
-- [ ] 5. Create basic UI components using shadcn/ui
+- [x] 5. Create basic UI components using shadcn/ui
   - Install and configure shadcn/ui components: button, input, select, badge, card, drawer
   - Create TaskCard component to display todo items with all properties
   - Build EmptyState component for when no tasks are available

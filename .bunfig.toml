@@ -1,0 +1,20 @@
+# Bun configuration file
+# This ensures consistent behavior across different environments
+
+[install]
+# Use exact versions for better reproducibility
+exact = true
+
+# Automatically install peer dependencies
+auto = true
+
+# Use the registry for faster installs
+registry = "https://registry.npmjs.org"
+
+[install.cache]
+# Enable install cache for faster subsequent installs
+disable = false
+
+[test]
+# Use Jest for testing instead of Bun's built-in test runner
+# Run tests with: bun run test
