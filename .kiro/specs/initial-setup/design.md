@@ -32,7 +32,7 @@ graph TB
 
 ### Technology Stack
 
-- **Framework**: Next.js 14+ with App Router
+- **Framework**: Next.js 15+ with App Router
 - **UI Components**: shadcn/ui for consistent, accessible components
 - **Styling**: Tailwind CSS for responsive design and animations
 - **State Management**: React Context + useReducer for global state
@@ -173,7 +173,7 @@ The Todo interface represents the core data structure with the following propert
 
 ### Local Storage Schema
 
-Data is stored in localStorage under the key 'focus-todo-app' as a JSON object:
+Data is stored in localStorage under the key 'to-do-right-now' as a JSON object:
 
 ```json
 {
