@@ -2,9 +2,6 @@
 # This ensures consistent behavior across different environments
 
 [install]
-# Use exact versions for better reproducibility
-exact = true
-
 # Automatically install peer dependencies
 auto = true
 
@@ -18,3 +15,11 @@ disable = false
 [test]
 # Use Jest for testing instead of Bun's built-in test runner
 # Run tests with: bun run test
+
++[install.lockfile]
++# Save exact lockfile for better reproducibility
++save = true
++
++[run]
++# Set default shell for scripts
++shell = "bash"

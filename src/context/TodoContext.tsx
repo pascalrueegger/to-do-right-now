@@ -6,6 +6,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useState, ReactNode } from 'react';
 import { Todo, TodoState, TodoAction } from '../lib/types';
 import { DEFAULT_STATUS, DEFAULT_PRIORITY, DEFAULT_TODO_COLOR } from '../lib/constants';
+import { generateTodoId } from '../lib/utils';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 // Initial state
@@ -61,7 +62,7 @@ const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
     case 'ADD_TODO': {
       const newTodo: Todo = {
         ...action.payload,
-        id: crypto.randomUUID(),
+        id: generateTodoId(),
         createdDate: new Date(),
         order: getNextOrder(state.todos),
         status: DEFAULT_STATUS,
@@ -196,13 +197,13 @@ export const TodoProvider: React.FC<TodoProviderProps> = ({ children }) => {
 
   // Persist todos to localStorage whenever they change (but not during initial load)
   useEffect(() => {
-    if (!isLoading && isInitialized && state.todos.length >= 0) {
+    if (!isLoading && isInitialized) {
       updateTodos(state.todos).catch(error => {
         console.error('Failed to persist todos:', error);
         // TODO: Show user-friendly error message
       });
     }
-  }, [state.todos, updateTodos, isLoading, isInitialized]);
+  }, [state.todos, isLoading, isInitialized]);
 
   const contextValue: TodoContextType = {
     state,

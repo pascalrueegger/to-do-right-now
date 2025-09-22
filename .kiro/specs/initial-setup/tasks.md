@@ -38,7 +38,7 @@
   - Write unit tests for component rendering and prop handling
   - _Requirements: 1.4, 5.4, 7.1, 7.2_
 
-- [ ] 6. Implement the main "doing" view interface
+- [x] 6. Implement the main "doing" view interface
   - Create DoingView component that displays current task or empty state
   - Show task title, description, priority badge, tags, and color indicator
   - Add "Mark Complete" button with proper styling and accessibility

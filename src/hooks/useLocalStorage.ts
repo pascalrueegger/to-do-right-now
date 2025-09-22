@@ -254,18 +254,16 @@ export const useLocalStorage = (): UseLocalStorageReturn => {
 
   // Update todos specifically (convenience method)
   const updateTodos = useCallback(async (todos: Todo[]): Promise<void> => {
-    if (!data) {
-      throw new StorageError('No data available to update', 'NO_DATA');
-    }
-
     const serializedTodos = todos.map(serializeTodo);
     const updatedData: StorageData = {
-      ...data,
-      todos: serializedTodos
+      todos: serializedTodos,
+      settings: {
+        lastOpenedDrawer: false
+      }
     };
 
     await setData(updatedData);
-  }, [data, setData]);
+  }, [setData]);
 
   // Remove data
   const removeData = useCallback(async (): Promise<void> => {

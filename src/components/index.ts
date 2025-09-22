@@ -19,3 +19,4 @@ export {
 export { TaskCard } from './TaskCard';
 export { EmptyState } from './EmptyState';
 export { Layout, MainContent, Container, Grid, Flex } from './Layout';
+export { DoingView } from './DoingView';
