@@ -35,11 +35,11 @@ jest.mock('../TaskCard', () => ({
 }));
 
 jest.mock('../TaskForm', () => ({
-  TaskForm: ({ onSubmit, onCancel, submitLabel, isLoading }: any) => (
+  TaskForm: ({ todo, onSubmit, onCancel, isLoading }: any) => (
     <div data-testid="task-form">
-      <span>{submitLabel}</span>
-      <button onClick={() => onSubmit({ title: 'Test Task' })} disabled={isLoading}>
-        Submit
+      <span>{todo ? 'Update Task' : 'Add Task'}</span>
+      <button onClick={() => onSubmit({ title: 'Test Task', description: '', priority: 'medium', tags: [], color: '#ff6b6b' })} disabled={isLoading}>
+        {todo ? 'Update Task' : 'Add Task'}
       </button>
       <button onClick={onCancel}>Cancel</button>
     </div>
@@ -164,7 +164,7 @@ describe('TaskList', () => {
       await user.click(screen.getByRole('button', { name: /add new task/i }));
 
       expect(screen.getByTestId('task-form')).toBeInTheDocument();
-      expect(screen.getByText('Add Task')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /add task/i })).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: /add new task/i })).not.toBeInTheDocument();
     });
 
@@ -173,9 +173,15 @@ describe('TaskList', () => {
       render(<TaskList />);
 
       await user.click(screen.getByRole('button', { name: /add new task/i }));
-      await user.click(screen.getByRole('button', { name: /submit/i }));
+      await user.click(screen.getByRole('button', { name: /add task/i }));
 
-      expect(defaultMockUseTodos.addTodo).toHaveBeenCalledWith({ title: 'Test Task' });
+      expect(defaultMockUseTodos.addTodo).toHaveBeenCalledWith({ 
+        title: 'Test Task', 
+        description: '', 
+        priority: 'medium', 
+        tags: [], 
+        color: '#ff6b6b' 
+      });
     });
 
     it('hides form when cancel is clicked', async () => {
@@ -199,7 +205,7 @@ describe('TaskList', () => {
       await user.click(screen.getByTestId('edit-1'));
 
       expect(screen.getByTestId('task-form')).toBeInTheDocument();
-      expect(screen.getByText('Update Task')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /update task/i })).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: /add new task/i })).not.toBeInTheDocument();
     });
 
@@ -208,9 +214,15 @@ describe('TaskList', () => {
       render(<TaskList />);
 
       await user.click(screen.getByTestId('edit-1'));
-      await user.click(screen.getByRole('button', { name: /submit/i }));
+      await user.click(screen.getByRole('button', { name: /update task/i }));
 
-      expect(defaultMockUseTodos.updateTodo).toHaveBeenCalledWith('1', { title: 'Test Task' });
+      expect(defaultMockUseTodos.updateTodo).toHaveBeenCalledWith('1', { 
+        title: 'Test Task', 
+        description: '', 
+        priority: 'medium', 
+        tags: [], 
+        color: '#ff6b6b' 
+      });
     });
 
     it('hides edit form when cancel is clicked', async () => {
@@ -243,7 +255,7 @@ describe('TaskList', () => {
 
       // Simulate loading state by clicking add button and checking for loading state
       fireEvent.click(screen.getByRole('button', { name: /add new task/i }));
-      fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+      fireEvent.click(screen.getByRole('button', { name: /add task/i }));
 
       // The loading state is internal, so we test the behavior indirectly
       expect(defaultMockUseTodos.addTodo).toHaveBeenCalled();
@@ -258,7 +270,7 @@ describe('TaskList', () => {
 
       // Test that form submission triggers loading state
       await user.click(addButton);
-      const submitButton = screen.getByRole('button', { name: /submit/i });
+      const submitButton = screen.getByRole('button', { name: /add task/i });
 
       // The form should handle its own loading state
       expect(submitButton).toBeInTheDocument();
@@ -304,7 +316,7 @@ describe('TaskList', () => {
       render(<TaskList />);
 
       await user.click(screen.getByRole('button', { name: /add new task/i }));
-      await user.click(screen.getByRole('button', { name: /submit/i }));
+      await user.click(screen.getByRole('button', { name: /add task/i }));
 
       await waitFor(() => {
         expect(screen.getByText('Failed to add task. Please try again.')).toBeInTheDocument();
@@ -328,7 +340,7 @@ describe('TaskList', () => {
       render(<TaskList />);
 
       await user.click(screen.getByTestId('edit-1'));
-      await user.click(screen.getByRole('button', { name: /submit/i }));
+      await user.click(screen.getByRole('button', { name: /update task/i }));
 
       await waitFor(() => {
         expect(screen.getByText('Failed to update task. Please try again.')).toBeInTheDocument();
@@ -419,11 +431,11 @@ describe('TaskList', () => {
 
       // Start with add mode
       await user.click(screen.getByRole('button', { name: /add new task/i }));
-      expect(screen.getByText('Add Task')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /add task/i })).toBeInTheDocument();
 
       // Switch to edit mode
       await user.click(screen.getByTestId('edit-1'));
-      expect(screen.getByText('Update Task')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /update task/i })).toBeInTheDocument();
       expect(screen.queryByText('Add Task')).not.toBeInTheDocument();
 
       // Cancel edit and return to normal state
@@ -438,7 +450,7 @@ describe('TaskList', () => {
 
       // Start editing
       await user.click(screen.getByTestId('edit-1'));
-      expect(screen.getByText('Update Task')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /update task/i })).toBeInTheDocument();
 
       // Add button should not be visible
       expect(screen.queryByRole('button', { name: /add new task/i })).not.toBeInTheDocument();

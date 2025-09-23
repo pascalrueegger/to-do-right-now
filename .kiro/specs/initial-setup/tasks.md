@@ -74,7 +74,7 @@
   - Write unit tests for task list rendering and CRUD operations
   - _Requirements: 3.4, 5.3_
 
-- [ ] 10. Add drag-and-drop reordering functionality
+- [x] 10. Add drag-and-drop reordering functionality
   - Install and configure @dnd-kit/core for accessible drag-and-drop
   - Implement drag handles and visual feedback during dragging
   - Update task order property when items are dropped in new positions
