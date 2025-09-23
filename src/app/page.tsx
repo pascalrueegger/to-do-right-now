@@ -2,11 +2,14 @@
 
 import { TodoProvider } from '@/context/TodoContext';
 import { MainLayout } from '@/components/MainLayout';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export default function Home() {
   return (
-    <TodoProvider>
-      <MainLayout />
-    </TodoProvider>
+    <ErrorBoundary>
+      <TodoProvider>
+        <MainLayout />
+      </TodoProvider>
+    </ErrorBoundary>
   );
 }

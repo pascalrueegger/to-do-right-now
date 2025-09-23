@@ -3,10 +3,13 @@
  * Handles global keyboard shortcuts and application state transitions
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DoingView } from './DoingView';
 import { PlanningDrawer } from './PlanningDrawer';
+import { LoadingState } from './LoadingState';
+import { InitializationStatus } from './InitializationStatus';
 import { useTodos } from '@/hooks/useTodos';
+import { useTodoContext } from '@/context/TodoContext';
 import { cn } from '@/lib/utils';
 
 interface MainLayoutProps {
@@ -15,6 +18,41 @@ interface MainLayoutProps {
 
 export function MainLayout({ className }: MainLayoutProps) {
   const { isDrawerOpen, toggleDrawer } = useTodos();
+  const { 
+    isInitialized, 
+    isLoading, 
+    initializationError, 
+    initializationWarnings,
+    storageError 
+  } = useTodoContext();
+  const [showInitStatus, setShowInitStatus] = useState(true);
+
+  // Show loading state during initialization
+  if (isLoading || !isInitialized) {
+    return <LoadingState message="Initializing your workspace..." />;
+  }
+
+  // Show error state if initialization failed
+  if (initializationError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center space-y-4">
+          <h2 className="text-xl font-semibold text-destructive">
+            Initialization Failed
+          </h2>
+          <p className="text-muted-foreground">
+            {initializationError}
+          </p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            Reload App
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -43,6 +81,17 @@ export function MainLayout({ className }: MainLayoutProps) {
       'transition-all duration-300 ease-in-out',
       className
     )}>
+      {/* Initialization status */}
+      {showInitStatus && (initializationWarnings.length > 0 || storageError) && (
+        <div className="p-4">
+          <InitializationStatus
+            errors={storageError ? [storageError.message || 'Storage error occurred'] : []}
+            warnings={initializationWarnings}
+            onDismiss={() => setShowInitStatus(false)}
+          />
+        </div>
+      )}
+
       {/* Main content area */}
       <main className={cn(
         'flex-1 flex flex-col',

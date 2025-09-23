@@ -41,6 +41,7 @@ export interface SerializableTodo extends Omit<Todo, 'createdDate'> {
 
 // Local storage data structure
 export interface StorageData {
+  version?: number; // Schema version for migrations
   todos: SerializableTodo[];
   settings: {
     lastOpenedDrawer: boolean;

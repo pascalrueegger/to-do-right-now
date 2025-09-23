@@ -8,6 +8,7 @@ import { Todo, TodoState, TodoAction } from '../lib/types';
 import { DEFAULT_STATUS, DEFAULT_PRIORITY, DEFAULT_TODO_COLOR } from '../lib/constants';
 import { generateTodoId } from '../lib/utils';
 import useLocalStorage from '../hooks/useLocalStorage';
+import { initializeApp, validateAppState, cleanupApp } from '../lib/appInitialization';
 
 // Initial state
 const initialState: TodoState = {
@@ -166,6 +167,11 @@ const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
 interface TodoContextType {
   state: TodoState;
   dispatch: React.Dispatch<TodoAction>;
+  isInitialized: boolean;
+  isLoading: boolean;
+  initializationError: string | null;
+  initializationWarnings: string[];
+  storageError: any;
 }
 
 // Create context
@@ -178,22 +184,77 @@ interface TodoProviderProps {
 
 export const TodoProvider: React.FC<TodoProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(todoReducer, initialState);
-  const { data: storageData, updateTodos, isLoading } = useLocalStorage();
+  const { data: storageData, updateTodos, isLoading, error: storageError } = useLocalStorage();
   const [isInitialized, setIsInitialized] = useState(false);
+  const [initializationError, setInitializationError] = useState<string | null>(null);
+  const [initializationWarnings, setInitializationWarnings] = useState<string[]>([]);
 
-  // Load todos from localStorage on mount
+  // Initialize app and load todos from localStorage on mount
   useEffect(() => {
-    if (!isLoading && storageData?.todos && !isInitialized) {
-      // Convert serializable todos to Todo objects
-      const todos: Todo[] = storageData.todos.map(todo => ({
-        ...todo,
-        createdDate: new Date(todo.createdDate)
-      }));
-      
-      dispatch({ type: 'LOAD_TODOS', payload: todos });
-      setIsInitialized(true);
-    }
+    const initializeApplication = async () => {
+      if (isLoading || isInitialized) return;
+
+      try {
+        const initResult = await initializeApp({
+          enableMigration: true,
+          enableValidation: true,
+          enableFallback: true,
+          maxRetries: 3
+        });
+
+        if (!initResult.success) {
+          setInitializationError(`Initialization failed: ${initResult.errors.join(', ')}`);
+          return;
+        }
+
+        if (initResult.warnings.length > 0) {
+          setInitializationWarnings(initResult.warnings);
+          console.warn('Initialization warnings:', initResult.warnings);
+        }
+
+        if (initResult.migrated) {
+          console.log('Data successfully migrated to current schema version');
+        }
+
+        if (initResult.fallbackUsed) {
+          console.warn('Using fallback storage due to localStorage issues');
+        }
+
+        // Load todos if available
+        if (storageData?.todos) {
+          // Convert serializable todos to Todo objects
+          const todos: Todo[] = storageData.todos.map(todo => ({
+            ...todo,
+            createdDate: new Date(todo.createdDate)
+          }));
+
+          // Validate app state consistency
+          const validation = validateAppState(todos);
+          if (!validation.isValid) {
+            console.warn('App state validation issues:', validation.issues);
+            setInitializationWarnings(prev => [...prev, ...validation.issues]);
+          }
+          
+          dispatch({ type: 'LOAD_TODOS', payload: todos });
+        }
+
+        setIsInitialized(true);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown initialization error';
+        setInitializationError(errorMessage);
+        console.error('App initialization failed:', error);
+      }
+    };
+
+    initializeApplication();
   }, [storageData, isLoading, isInitialized]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      cleanupApp();
+    };
+  }, []);
 
   // Persist todos to localStorage whenever they change (but not during initial load)
   useEffect(() => {
@@ -208,6 +269,11 @@ export const TodoProvider: React.FC<TodoProviderProps> = ({ children }) => {
   const contextValue: TodoContextType = {
     state,
     dispatch,
+    isInitialized,
+    isLoading,
+    initializationError,
+    initializationWarnings,
+    storageError,
   };
 
   return (
