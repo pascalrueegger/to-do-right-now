@@ -16,6 +16,7 @@ import {
 import { Plus, List, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTodos } from '@/hooks/useTodos';
+import { TaskList } from './TaskList';
 
 interface PlanningDrawerProps {
   className?: string;
@@ -82,18 +83,7 @@ export function PlanningDrawer({ className }: PlanningDrawerProps) {
           </DrawerHeader>
 
           <div className="flex-1 overflow-y-auto p-6 pt-0">
-            {/* Placeholder content - will be implemented in future tasks */}
-            <div className="space-y-4">
-              <div className="text-center text-muted-foreground py-8">
-                <List className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="text-sm">
-                  Task management interface will be implemented in upcoming tasks
-                </p>
-                <p className="text-xs mt-2">
-                  This includes task list, add form, and sorting controls
-                </p>
-              </div>
-            </div>
+            <TaskList />
           </div>
         </DrawerContent>
       </Drawer>

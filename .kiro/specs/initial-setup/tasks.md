@@ -65,7 +65,7 @@
   - Write unit tests for form validation and submission logic
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-- [ ] 9. Implement task list display in planning drawer
+- [x] 9. Implement task list display in planning drawer
   - Create task list component that renders all todos in current order
   - Display tasks with TaskCard components showing all properties
   - Add edit and delete functionality for existing tasks

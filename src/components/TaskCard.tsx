@@ -12,7 +12,7 @@ interface TaskCardProps {
   onDelete?: (id: string) => void;
   showActions?: boolean;
   isDragging?: boolean;
-  dragHandleProps?: any;
+  dragHandleProps?: Record<string, unknown>;
   className?: string;
 }
 

@@ -14,6 +14,16 @@ import { useTodos } from '../../hooks/useTodos';
 jest.mock('../../hooks/useTodos');
 const mockUseTodos = useTodos as jest.MockedFunction<typeof useTodos>;
 
+// Mock TaskList component
+jest.mock('../TaskList', () => ({
+  TaskList: () => (
+    <div data-testid="task-list">
+      <button>Add New Task</button>
+      <div>No tasks yet</div>
+    </div>
+  ),
+}));
+
 // Mock toggle function
 const mockToggleDrawer = jest.fn();
 
@@ -125,16 +135,20 @@ describe('PlanningDrawer', () => {
       expect(screen.getByText('Manage your tasks and organize your workflow')).toBeInTheDocument();
     });
 
-    it('shows placeholder content for future implementation', () => {
+    it('shows task list component when drawer is open', () => {
       mockUseTodos.mockReturnValue({
         ...mockUseTodos(),
         isDrawerOpen: true,
+        todos: [],
+        incompleteTodos: [],
+        completedTodos: [],
       });
 
       renderWithProvider(<PlanningDrawer />);
       
-      expect(screen.getByText('Task management interface will be implemented in upcoming tasks')).toBeInTheDocument();
-      expect(screen.getByText('This includes task list, add form, and sorting controls')).toBeInTheDocument();
+      // Should show the TaskList component with empty state
+      expect(screen.getByText('Add New Task')).toBeInTheDocument();
+      expect(screen.getByText('No tasks yet')).toBeInTheDocument();
     });
   });
 

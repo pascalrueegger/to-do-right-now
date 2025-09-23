@@ -19,6 +19,7 @@ export {
 // Custom Components
 export { TaskCard } from './TaskCard';
 export { TaskForm } from './TaskForm';
+export { TaskList } from './TaskList';
 export { EmptyState } from './EmptyState';
 export { Layout, MainContent, Container, Grid, Flex } from './Layout';
 export { DoingView } from './DoingView';
