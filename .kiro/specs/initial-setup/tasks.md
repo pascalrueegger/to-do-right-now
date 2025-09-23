@@ -56,7 +56,7 @@
   - Write unit tests for drawer behavior and accessibility
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 7.3, 7.5_
 
-- [ ] 8. Create task form for adding and editing todos
+- [x] 8. Create task form for adding and editing todos
   - Build TaskForm component with fields for title, description, priority, tags, and color
   - Implement form validation with real-time feedback for required fields
   - Add tag input with support for multiple tags and proper formatting
