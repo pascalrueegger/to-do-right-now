@@ -81,7 +81,7 @@ describe('TaskForm', () => {
       TASK_COLORS.forEach(color => {
         const colorButton = screen.getByLabelText(`Select color ${color}`);
         expect(colorButton).toBeInTheDocument();
-        expect(colorButton).toHaveStyle(`background-color: ${color}`);
+        expect(colorButton).toHaveStyle({ backgroundColor: color });
       });
     });
   });

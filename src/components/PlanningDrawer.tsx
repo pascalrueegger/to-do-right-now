@@ -127,14 +127,16 @@ export function PlanningDrawer({ className }: PlanningDrawerProps) {
             variant={shouldHighlightButton ? "default" : "outline"}
             size="lg"
             className={cn(
-              'fixed top-4 left-4 z-40',
-              'flex items-center gap-2',
-              'shadow-lg',
-              'transition-all duration-200',
+              'fixed top-6 left-6 z-40',
+              'flex items-center gap-2 px-4 py-3',
+              'backdrop-blur-sm bg-white/90 border border-white/20',
+              'shadow-lg hover:shadow-xl',
+              'transition-all duration-200 rounded-xl',
+              'hover:scale-105 active:scale-95',
               shouldHighlightButton && [
-                'bg-primary text-primary-foreground',
-                'hover:bg-primary/90',
-                'animate-pulse',
+                'gradient-primary text-primary-foreground border-0',
+                'hover:shadow-2xl',
+                'animate-bounce-subtle',
                 'ring-2 ring-primary/20'
               ]
             )}
@@ -155,24 +157,26 @@ export function PlanningDrawer({ className }: PlanningDrawerProps) {
           </Button>
         </DrawerTrigger>
 
-        <DrawerContent className="h-full w-3/4 max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle className="flex items-center gap-2">
-              <List className="h-5 w-5" />
+        <DrawerContent className="h-full w-3/4 max-w-sm glass-card border-r border-gray-200">
+          <DrawerHeader className="border-b border-gray-200 bg-gradient-to-r from-white/80 to-white/60 backdrop-blur-sm">
+            <DrawerTitle className="flex items-center gap-3 text-xl">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <List className="h-5 w-5 text-primary" />
+              </div>
               Planning
             </DrawerTitle>
-            <DrawerDescription>
+            <DrawerDescription className="text-gray-600">
               Manage your tasks and organize your workflow
             </DrawerDescription>
           </DrawerHeader>
 
-          <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 pt-6 space-y-6 bg-gradient-to-b from-white/50 to-white/80">
             <TaskList />
             
             {/* Settings and Actions Section */}
             <div className="border-t pt-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-foreground">Settings & Data</h3>
+                <h3 className="text-sm font-semibold text-gray-900">Settings & Data</h3>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -219,7 +223,7 @@ export function PlanningDrawer({ className }: PlanningDrawerProps) {
                     Reset App
                   </Button>
 
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-gray-500">
                     Export your data before resetting. Import will replace all current tasks.
                   </p>
                 </div>

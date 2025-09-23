@@ -15,8 +15,6 @@ import {
   DragStartEvent,
   DragOverlay,
   DndContextProps,
-  Announcements,
-  ScreenReaderInstructions,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -103,42 +101,7 @@ export function TaskList({ className }: TaskListProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isSorting, setIsSorting] = useState(false);
 
-  // Accessibility announcements for screen readers
-  const announcements: Announcements = {
-    onDragStart({ active }) {
-      const todo = incompleteTodos.find(t => t.id === active.id);
-      return `Picked up task "${todo?.title}".`;
-    },
-    onDragOver({ active, over }) {
-      if (over) {
-        const activeTodo = incompleteTodos.find(t => t.id === active.id);
-        const overTodo = incompleteTodos.find(t => t.id === over.id);
-        return `Task "${activeTodo?.title}" was moved over task "${overTodo?.title}".`;
-      }
-      return '';
-    },
-    onDragEnd({ active, over }) {
-      const activeTodo = incompleteTodos.find(t => t.id === active.id);
-      if (over) {
-        const overTodo = incompleteTodos.find(t => t.id === over.id);
-        return `Task "${activeTodo?.title}" was dropped over task "${overTodo?.title}".`;
-      }
-      return `Task "${activeTodo?.title}" was dropped.`;
-    },
-    onDragCancel({ active }) {
-      const todo = incompleteTodos.find(t => t.id === active.id);
-      return `Dragging was cancelled. Task "${todo?.title}" was dropped.`;
-    },
-  };
 
-  // Screen reader instructions
-  const screenReaderInstructions: ScreenReaderInstructions = {
-    draggable: `
-      To pick up a draggable item, press the space bar.
-      While dragging, use the arrow keys to move the item.
-      Press space again to drop the item in its new position, or press escape to cancel.
-    `,
-  };
 
   // Configure sensors for drag and drop
   const sensors = useSensors(
@@ -277,7 +240,7 @@ export function TaskList({ className }: TaskListProps) {
       {!showAddForm && !editingTodo && (
         <Button
           onClick={handleShowAddForm}
-          className="w-full"
+          className="w-full gradient-primary transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl py-3"
           disabled={isLoading}
         >
           {isLoading ? (
@@ -291,7 +254,7 @@ export function TaskList({ className }: TaskListProps) {
 
       {/* Add/Edit Form */}
       {(showAddForm || editingTodo) && (
-        <div className="border rounded-lg p-4 bg-gray-50">
+        <div className="modern-card p-6 animate-slide-up">
           <TaskForm
             todo={editingTodo || undefined}
             onSubmit={handleFormSubmit}
@@ -307,17 +270,14 @@ export function TaskList({ className }: TaskListProps) {
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        announcements={announcements}
-        accessibility={{
-          screenReaderInstructions,
-        }}
       >
         <div className="space-y-6">
           {/* Incomplete Tasks */}
           {incompleteTodos.length > 0 && (
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-gray-700">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary" />
                   Active Tasks ({incompleteTodos.length})
                 </h3>
                 {incompleteTodos.length > 1 && (
@@ -326,7 +286,7 @@ export function TaskList({ className }: TaskListProps) {
                     size="sm"
                     onClick={handleSortByPriority}
                     disabled={isLoading || isSorting || !!editingTodo || showAddForm}
-                    className="flex items-center gap-1 h-7 px-2 text-xs"
+                    className="flex items-center gap-1.5 h-8 px-3 text-xs rounded-lg hover:bg-gray-100 transition-colors"
                     title="Sort tasks by priority (High → Medium → Low)"
                   >
                     {isSorting ? (
@@ -334,7 +294,7 @@ export function TaskList({ className }: TaskListProps) {
                     ) : (
                       <ArrowUpDown className="h-3 w-3" />
                     )}
-                    {isSorting ? 'Sorting...' : 'Sort by Priority'}
+                    {isSorting ? 'Sorting...' : 'Sort'}
                   </Button>
                 )}
               </div>
@@ -360,7 +320,8 @@ export function TaskList({ className }: TaskListProps) {
           {/* Completed Tasks */}
           {completedTodos.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-3">
+              <h3 className="text-sm font-semibold text-gray-600 mb-4 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500" />
                 Completed Tasks ({completedTodos.length})
               </h3>
               <div className="space-y-3">
@@ -380,17 +341,23 @@ export function TaskList({ className }: TaskListProps) {
 
           {/* Empty State */}
           {todos.length === 0 && !showAddForm && (
-            <div className="text-center py-8">
-              <div className="text-gray-400 mb-4">
-                <Plus className="h-12 w-12 mx-auto mb-2" />
+            <div className="text-center py-12 animate-fade-in">
+              <div className="mb-6">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center">
+                  <Plus className="h-8 w-8 text-primary" />
+                </div>
               </div>
-              <h3 className="text-lg font-medium text-gray-700 mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 No tasks yet
               </h3>
-              <p className="text-sm text-gray-500 mb-4">
+              <p className="text-sm text-gray-600 mb-6 max-w-xs mx-auto">
                 Create your first task to get started with focused productivity
               </p>
-              <Button onClick={handleShowAddForm} disabled={isLoading}>
+              <Button 
+                onClick={handleShowAddForm} 
+                disabled={isLoading}
+                className="gradient-primary transition-all duration-200 hover:scale-105 rounded-xl px-6"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Your First Task
               </Button>

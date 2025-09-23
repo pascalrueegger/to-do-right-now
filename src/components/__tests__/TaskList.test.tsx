@@ -463,7 +463,7 @@ describe('TaskList', () => {
     it('shows sort button when there are multiple active tasks', () => {
       render(<TaskList />);
 
-      expect(screen.getByRole('button', { name: /sort by priority/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /sort/i })).toBeInTheDocument();
       expect(screen.getByTitle('Sort tasks by priority (High → Medium → Low)')).toBeInTheDocument();
     });
 
@@ -475,7 +475,7 @@ describe('TaskList', () => {
 
       render(<TaskList />);
 
-      expect(screen.queryByRole('button', { name: /sort by priority/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /sort/i })).not.toBeInTheDocument();
     });
 
     it('hides sort button when there are no active tasks', () => {
@@ -486,14 +486,14 @@ describe('TaskList', () => {
 
       render(<TaskList />);
 
-      expect(screen.queryByRole('button', { name: /sort by priority/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /sort/i })).not.toBeInTheDocument();
     });
 
     it('calls sortByPriority when sort button is clicked', async () => {
       const user = userEvent.setup();
       render(<TaskList />);
 
-      await user.click(screen.getByRole('button', { name: /sort by priority/i }));
+      await user.click(screen.getByRole('button', { name: /sort/i }));
 
       expect(defaultMockUseTodos.sortByPriority).toHaveBeenCalledTimes(1);
     });
@@ -502,7 +502,7 @@ describe('TaskList', () => {
       const user = userEvent.setup();
       render(<TaskList />);
 
-      const sortButton = screen.getByRole('button', { name: /sort by priority/i });
+      const sortButton = screen.getByRole('button', { name: /sort/i });
       await user.click(sortButton);
 
       // Check for loading state (button should show "Sorting...")
@@ -518,7 +518,7 @@ describe('TaskList', () => {
       // Start editing a task
       await user.click(screen.getByTestId('edit-1'));
 
-      const sortButton = screen.getByRole('button', { name: /sort by priority/i });
+      const sortButton = screen.getByRole('button', { name: /sort/i });
       expect(sortButton).toBeDisabled();
     });
 
@@ -529,7 +529,7 @@ describe('TaskList', () => {
       // Open add form
       await user.click(screen.getByRole('button', { name: /add new task/i }));
 
-      const sortButton = screen.getByRole('button', { name: /sort by priority/i });
+      const sortButton = screen.getByRole('button', { name: /sort/i });
       expect(sortButton).toBeDisabled();
     });
 
@@ -547,7 +547,7 @@ describe('TaskList', () => {
       const user = userEvent.setup();
       render(<TaskList />);
 
-      await user.click(screen.getByRole('button', { name: /sort by priority/i }));
+      await user.click(screen.getByRole('button', { name: /sort/i }));
 
       await waitFor(() => {
         expect(screen.getByText('Failed to sort tasks. Please try again.')).toBeInTheDocument();
@@ -571,7 +571,7 @@ describe('TaskList', () => {
       render(<TaskList />);
 
       // Trigger sort error
-      await user.click(screen.getByRole('button', { name: /sort by priority/i }));
+      await user.click(screen.getByRole('button', { name: /sort/i }));
       await waitFor(() => {
         expect(screen.getByText('Failed to sort tasks. Please try again.')).toBeInTheDocument();
       });
@@ -586,7 +586,7 @@ describe('TaskList', () => {
     it('has proper accessibility attributes', () => {
       render(<TaskList />);
 
-      const sortButton = screen.getByRole('button', { name: /sort by priority/i });
+      const sortButton = screen.getByRole('button', { name: /sort/i });
       expect(sortButton).toHaveAttribute('title', 'Sort tasks by priority (High → Medium → Low)');
     });
   });

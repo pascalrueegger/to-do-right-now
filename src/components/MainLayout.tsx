@@ -76,14 +76,21 @@ export function MainLayout({ className }: MainLayoutProps) {
 
   return (
     <div className={cn(
-      'min-h-screen bg-background',
-      'flex flex-col relative',
+      'min-h-screen relative overflow-hidden',
+      'flex flex-col',
       'transition-all duration-300 ease-in-out',
       className
     )}>
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/3 rounded-full blur-3xl" />
+      </div>
+
       {/* Initialization status */}
       {showInitStatus && (initializationWarnings.length > 0 || storageError) && (
-        <div className="p-4">
+        <div className="relative z-10 p-4 animate-slide-up">
           <InitializationStatus
             errors={storageError ? [storageError.message || 'Storage error occurred'] : []}
             warnings={initializationWarnings}
@@ -94,7 +101,7 @@ export function MainLayout({ className }: MainLayoutProps) {
 
       {/* Main content area */}
       <main className={cn(
-        'flex-1 flex flex-col',
+        'relative z-10 flex-1 flex flex-col',
         'transition-all duration-300 ease-in-out',
         isDrawerOpen && 'lg:ml-0' // Ensure proper spacing on larger screens
       )}>
@@ -104,12 +111,13 @@ export function MainLayout({ className }: MainLayoutProps) {
       {/* Planning drawer overlay */}
       <PlanningDrawer />
 
-      {/* Backdrop for drawer on mobile */}
+      {/* Enhanced backdrop for drawer on mobile */}
       {isDrawerOpen && (
         <div 
           className={cn(
-            'fixed inset-0 bg-black/20 z-30',
-            'transition-opacity duration-300',
+            'fixed inset-0 z-30',
+            'bg-black/30 backdrop-blur-sm',
+            'transition-all duration-300',
             'lg:hidden' // Only show on mobile/tablet
           )}
           onClick={toggleDrawer}

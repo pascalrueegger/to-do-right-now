@@ -226,7 +226,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
     <form onSubmit={handleSubmit} className={cn("space-y-6", className)}>
       {/* General error message */}
       {errors.general && (
-        <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+        <div className="p-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl">
           {errors.general}
         </div>
       )}
@@ -245,6 +245,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           placeholder="Enter task title..."
           maxLength={MAX_TITLE_LENGTH}
           className={cn(
+            "rounded-xl border-gray-300 bg-gray-50 focus:bg-white transition-colors",
             touched.title && errors.title && "border-red-500 focus-visible:ring-red-500"
           )}
           disabled={isLoading}
@@ -274,6 +275,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           maxLength={MAX_DESCRIPTION_LENGTH}
           rows={3}
           className={cn(
+            "rounded-xl border-gray-300 bg-gray-50 focus:bg-white transition-colors resize-none",
             touched.description && errors.description && "border-red-500 focus-visible:ring-red-500"
           )}
           disabled={isLoading}
@@ -356,7 +358,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
               onKeyDown={handleTagInputKeyDown}
               placeholder="Add tags (press Enter or comma to add)..."
               disabled={isLoading}
-              className="flex-1"
+              className="flex-1 rounded-xl border-gray-300 bg-gray-50 focus:bg-white transition-colors"
             />
             <Button
               type="button"
@@ -365,6 +367,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
               onClick={addTag}
               disabled={!tagInput.trim() || isLoading}
               aria-label="Add tag"
+              className="rounded-xl hover:bg-gray-100 transition-colors"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -377,20 +380,20 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       </div>
 
       {/* Color picker */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">
+      <div className="space-y-3">
+        <label className="text-sm font-medium text-gray-900">
           Color
         </label>
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-5 gap-3">
           {TASK_COLORS.map((color) => (
             <button
               key={color}
               type="button"
               onClick={() => handleColorSelect(color)}
               className={cn(
-                "w-10 h-10 rounded-full border-2 transition-all hover:scale-110",
+                "w-12 h-12 rounded-xl border-2 transition-all hover:scale-110 hover:shadow-medium",
                 formData.color === color 
-                  ? "border-gray-900 shadow-lg" 
+                  ? "border-gray-900 shadow-lg scale-105" 
                   : "border-gray-300 hover:border-gray-400"
               )}
               style={{ backgroundColor: color }}
@@ -398,7 +401,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
               aria-label={`Select color ${color}`}
             >
               {formData.color === color && (
-                <Check className="h-4 w-4 text-white mx-auto" />
+                <Check className="h-4 w-4 text-white mx-auto drop-shadow-sm" />
               )}
             </button>
           ))}
@@ -406,11 +409,11 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       </div>
 
       {/* Form actions */}
-      <div className="flex gap-3 pt-4">
+      <div className="flex gap-3 pt-6 border-t border-gray-200">
         <Button
           type="submit"
           disabled={!isFormValid || isLoading}
-          className="flex-1"
+          className="flex-1 gradient-primary transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl py-3"
         >
           {isLoading ? (
             <>
@@ -426,6 +429,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           variant="outline"
           onClick={onCancel}
           disabled={isLoading}
+          className="px-6 rounded-xl hover:bg-gray-100 transition-colors"
         >
           Cancel
         </Button>
