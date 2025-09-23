@@ -31,6 +31,8 @@ export function PlanningDrawer({ className }: PlanningDrawerProps) {
     isDrawerOpen, 
     toggleDrawer 
   } = useTodos();
+  
+
   const { state, dispatch } = useTodoContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -121,41 +123,43 @@ export function PlanningDrawer({ className }: PlanningDrawerProps) {
 
   return (
     <div className={cn('', className)}>
+      {/* Trigger Button */}
+      <Button
+        onClick={toggleDrawer}
+        variant={shouldHighlightButton ? "default" : "outline"}
+        size="lg"
+        className={cn(
+          'fixed top-6 left-6 z-40',
+          'flex items-center gap-2 px-4 py-3',
+          'backdrop-blur-sm bg-white/90 border border-white/20',
+          'shadow-lg hover:shadow-xl',
+          'transition-all duration-200 rounded-xl',
+          'hover:scale-105 active:scale-95',
+          shouldHighlightButton && [
+            'gradient-primary text-primary-foreground border-0',
+            'hover:shadow-2xl',
+            'animate-bounce-subtle',
+            'ring-2 ring-primary/20'
+          ]
+        )}
+        aria-label={shouldHighlightButton ? "Add your first task" : "Open planning view"}
+      >
+        {shouldHighlightButton ? (
+          <>
+            <Plus className="h-4 w-4" />
+            Add Task
+            <AlertCircle className="h-3 w-3 ml-1" />
+          </>
+        ) : (
+          <>
+            <List className="h-4 w-4" />
+            Plan
+          </>
+        )}
+      </Button>
+
+      {/* Drawer */}
       <Drawer open={isDrawerOpen} onOpenChange={toggleDrawer}>
-        <DrawerTrigger asChild>
-          <Button
-            variant={shouldHighlightButton ? "default" : "outline"}
-            size="lg"
-            className={cn(
-              'fixed top-6 left-6 z-40',
-              'flex items-center gap-2 px-4 py-3',
-              'backdrop-blur-sm bg-white/90 border border-white/20',
-              'shadow-lg hover:shadow-xl',
-              'transition-all duration-200 rounded-xl',
-              'hover:scale-105 active:scale-95',
-              shouldHighlightButton && [
-                'gradient-primary text-primary-foreground border-0',
-                'hover:shadow-2xl',
-                'animate-bounce-subtle',
-                'ring-2 ring-primary/20'
-              ]
-            )}
-            aria-label={shouldHighlightButton ? "Add your first task" : "Open planning view"}
-          >
-            {shouldHighlightButton ? (
-              <>
-                <Plus className="h-4 w-4" />
-                Add Task
-                <AlertCircle className="h-3 w-3 ml-1" />
-              </>
-            ) : (
-              <>
-                <List className="h-4 w-4" />
-                Plan
-              </>
-            )}
-          </Button>
-        </DrawerTrigger>
 
         <DrawerContent className="h-full w-3/4 max-w-sm glass-card border-r border-gray-200">
           <DrawerHeader className="border-b border-gray-200 bg-gradient-to-r from-white/80 to-white/60 backdrop-blur-sm">

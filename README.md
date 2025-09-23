@@ -1,5 +1,5 @@
-# to-do-right-now
-A minimalist todo app focussing on the right now
+# to-do-right-now, Kiro branch
+This should have been a minimalist todo app focussing on the right now, but Kiro was not able to debug the code it had written, so this vibe coding project will be frozen in this state.
 
 ## Development
 

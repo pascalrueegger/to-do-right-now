@@ -27,6 +27,26 @@ export function MainLayout({ className }: MainLayoutProps) {
   } = useTodoContext();
   const [showInitStatus, setShowInitStatus] = useState(true);
 
+  // Global keyboard shortcuts - must be called before any early returns
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Escape key to close drawer
+      if (event.key === 'Escape' && isDrawerOpen) {
+        toggleDrawer();
+        event.preventDefault();
+      }
+      
+      // Ctrl/Cmd + P to toggle planning drawer
+      if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
+        toggleDrawer();
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isDrawerOpen, toggleDrawer]);
+
   // Show loading state during initialization
   if (isLoading || !isInitialized) {
     return <LoadingState message="Initializing your workspace..." />;
@@ -53,26 +73,6 @@ export function MainLayout({ className }: MainLayoutProps) {
       </div>
     );
   }
-
-  // Global keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Escape key to close drawer
-      if (event.key === 'Escape' && isDrawerOpen) {
-        toggleDrawer();
-        event.preventDefault();
-      }
-      
-      // Ctrl/Cmd + P to toggle planning drawer
-      if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
-        toggleDrawer();
-        event.preventDefault();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isDrawerOpen, toggleDrawer]);
 
   return (
     <div className={cn(

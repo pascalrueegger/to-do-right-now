@@ -95,13 +95,18 @@ export function TaskList({ className }: TaskListProps) {
   } = useTodos();
   
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(todos.length === 0); // Auto-show form when no tasks
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isSorting, setIsSorting] = useState(false);
 
-
+  // Auto-show add form when there are no tasks
+  React.useEffect(() => {
+    if (todos.length === 0 && !editingTodo) {
+      setShowAddForm(true);
+    }
+  }, [todos.length, editingTodo]);
 
   // Configure sensors for drag and drop
   const sensors = useSensors(
@@ -197,7 +202,10 @@ export function TaskList({ className }: TaskListProps) {
   // Handle form cancel
   const handleFormCancel = () => {
     setEditingTodo(null);
-    setShowAddForm(false);
+    // Don't hide the form if there are no tasks (user needs to add at least one)
+    if (todos.length > 0) {
+      setShowAddForm(false);
+    }
     setError(null);
   };
 
@@ -236,8 +244,8 @@ export function TaskList({ className }: TaskListProps) {
         </div>
       )}
 
-      {/* Add Task Button */}
-      {!showAddForm && !editingTodo && (
+      {/* Add Task Button - only show when there are existing tasks */}
+      {!showAddForm && !editingTodo && todos.length > 0 && (
         <Button
           onClick={handleShowAddForm}
           className="w-full gradient-primary transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl py-3"
@@ -339,30 +347,7 @@ export function TaskList({ className }: TaskListProps) {
             </div>
           )}
 
-          {/* Empty State */}
-          {todos.length === 0 && !showAddForm && (
-            <div className="text-center py-12 animate-fade-in">
-              <div className="mb-6">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center">
-                  <Plus className="h-8 w-8 text-primary" />
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No tasks yet
-              </h3>
-              <p className="text-sm text-gray-600 mb-6 max-w-xs mx-auto">
-                Create your first task to get started with focused productivity
-              </p>
-              <Button 
-                onClick={handleShowAddForm} 
-                disabled={isLoading}
-                className="gradient-primary transition-all duration-200 hover:scale-105 rounded-xl px-6"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Your First Task
-              </Button>
-            </div>
-          )}
+
         </div>
 
         {/* Drag Overlay */}
