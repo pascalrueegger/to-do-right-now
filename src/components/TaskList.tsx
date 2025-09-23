@@ -33,7 +33,7 @@ import { TaskForm } from './TaskForm';
 import { Button } from '@/components/ui/button';
 import { useTodos } from '@/hooks/useTodos';
 import { Todo } from '@/lib/types';
-import { Plus, Loader2, AlertCircle } from 'lucide-react';
+import { Plus, Loader2, AlertCircle, ArrowUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TaskListProps {
@@ -92,7 +92,8 @@ export function TaskList({ className }: TaskListProps) {
     updateTodo, 
     deleteTodo,
     addTodo,
-    reorderTodos
+    reorderTodos,
+    sortByPriority
   } = useTodos();
   
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
@@ -100,6 +101,7 @@ export function TaskList({ className }: TaskListProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [isSorting, setIsSorting] = useState(false);
 
   // Accessibility announcements for screen readers
   const announcements: Announcements = {
@@ -243,6 +245,24 @@ export function TaskList({ className }: TaskListProps) {
     setError(null);
   };
 
+  // Handle priority sorting
+  const handleSortByPriority = async () => {
+    try {
+      setIsSorting(true);
+      setError(null);
+      sortByPriority();
+      
+      // Provide visual feedback that sorting was applied
+      setTimeout(() => {
+        setIsSorting(false);
+      }, 500);
+    } catch (err) {
+      setError('Failed to sort tasks. Please try again.');
+      console.error('Sort by priority error:', err);
+      setIsSorting(false);
+    }
+  };
+
   return (
     <div className={cn('space-y-4', className)}>
       {/* Error display */}
@@ -296,9 +316,28 @@ export function TaskList({ className }: TaskListProps) {
           {/* Incomplete Tasks */}
           {incompleteTodos.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-3">
-                Active Tasks ({incompleteTodos.length})
-              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-medium text-gray-700">
+                  Active Tasks ({incompleteTodos.length})
+                </h3>
+                {incompleteTodos.length > 1 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSortByPriority}
+                    disabled={isLoading || isSorting || !!editingTodo || showAddForm}
+                    className="flex items-center gap-1 h-7 px-2 text-xs"
+                    title="Sort tasks by priority (High → Medium → Low)"
+                  >
+                    {isSorting ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <ArrowUpDown className="h-3 w-3" />
+                    )}
+                    {isSorting ? 'Sorting...' : 'Sort by Priority'}
+                  </Button>
+                )}
+              </div>
               <SortableContext 
                 items={incompleteTodos.map(todo => todo.id)} 
                 strategy={verticalListSortingStrategy}

@@ -83,7 +83,7 @@
   - Write unit tests for drag-and-drop behavior and order persistence
   - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 11. Implement priority-based automatic sorting
+- [x] 11. Implement priority-based automatic sorting
   - Create sort button in planning drawer with clear labeling
   - Implement sorting algorithm that orders by priority (high → medium → low)
   - Handle tasks with same priority by maintaining their previous relative order

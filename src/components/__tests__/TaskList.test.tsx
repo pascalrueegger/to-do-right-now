@@ -90,6 +90,8 @@ describe('TaskList', () => {
     updateTodo: jest.fn(),
     deleteTodo: jest.fn(),
     addTodo: jest.fn(),
+    reorderTodos: jest.fn(),
+    sortByPriority: jest.fn(),
   };
 
   beforeEach(() => {
@@ -454,6 +456,138 @@ describe('TaskList', () => {
 
       // Add button should not be visible
       expect(screen.queryByRole('button', { name: /add new task/i })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Priority Sorting', () => {
+    it('shows sort button when there are multiple active tasks', () => {
+      render(<TaskList />);
+
+      expect(screen.getByRole('button', { name: /sort by priority/i })).toBeInTheDocument();
+      expect(screen.getByTitle('Sort tasks by priority (High → Medium → Low)')).toBeInTheDocument();
+    });
+
+    it('hides sort button when there is only one active task', () => {
+      mockUseTodos.mockReturnValue({
+        ...defaultMockUseTodos,
+        incompleteTodos: [mockTodos[0]], // Only one active task
+      } as any);
+
+      render(<TaskList />);
+
+      expect(screen.queryByRole('button', { name: /sort by priority/i })).not.toBeInTheDocument();
+    });
+
+    it('hides sort button when there are no active tasks', () => {
+      mockUseTodos.mockReturnValue({
+        ...defaultMockUseTodos,
+        incompleteTodos: [], // No active tasks
+      } as any);
+
+      render(<TaskList />);
+
+      expect(screen.queryByRole('button', { name: /sort by priority/i })).not.toBeInTheDocument();
+    });
+
+    it('calls sortByPriority when sort button is clicked', async () => {
+      const user = userEvent.setup();
+      render(<TaskList />);
+
+      await user.click(screen.getByRole('button', { name: /sort by priority/i }));
+
+      expect(defaultMockUseTodos.sortByPriority).toHaveBeenCalledTimes(1);
+    });
+
+    it('shows loading state when sorting', async () => {
+      const user = userEvent.setup();
+      render(<TaskList />);
+
+      const sortButton = screen.getByRole('button', { name: /sort by priority/i });
+      await user.click(sortButton);
+
+      // Check for loading state (button should show "Sorting...")
+      await waitFor(() => {
+        expect(screen.getByText('Sorting...')).toBeInTheDocument();
+      });
+    });
+
+    it('disables sort button during loading states', async () => {
+      const user = userEvent.setup();
+      render(<TaskList />);
+
+      // Start editing a task
+      await user.click(screen.getByTestId('edit-1'));
+
+      const sortButton = screen.getByRole('button', { name: /sort by priority/i });
+      expect(sortButton).toBeDisabled();
+    });
+
+    it('disables sort button when add form is open', async () => {
+      const user = userEvent.setup();
+      render(<TaskList />);
+
+      // Open add form
+      await user.click(screen.getByRole('button', { name: /add new task/i }));
+
+      const sortButton = screen.getByRole('button', { name: /sort by priority/i });
+      expect(sortButton).toBeDisabled();
+    });
+
+    it('displays error message when sorting fails', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const mockSortByPriority = jest.fn().mockImplementation(() => {
+        throw new Error('Sort failed');
+      });
+
+      mockUseTodos.mockReturnValue({
+        ...defaultMockUseTodos,
+        sortByPriority: mockSortByPriority,
+      } as any);
+
+      const user = userEvent.setup();
+      render(<TaskList />);
+
+      await user.click(screen.getByRole('button', { name: /sort by priority/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText('Failed to sort tasks. Please try again.')).toBeInTheDocument();
+      });
+
+      consoleSpy.mockRestore();
+    });
+
+    it('clears error when starting new operation after sort error', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const mockSortByPriority = jest.fn().mockImplementation(() => {
+        throw new Error('Sort failed');
+      });
+
+      mockUseTodos.mockReturnValue({
+        ...defaultMockUseTodos,
+        sortByPriority: mockSortByPriority,
+      } as any);
+
+      const user = userEvent.setup();
+      render(<TaskList />);
+
+      // Trigger sort error
+      await user.click(screen.getByRole('button', { name: /sort by priority/i }));
+      await waitFor(() => {
+        expect(screen.getByText('Failed to sort tasks. Please try again.')).toBeInTheDocument();
+      });
+
+      // Start new operation - should clear error
+      await user.click(screen.getByRole('button', { name: /add new task/i }));
+      expect(screen.queryByText('Failed to sort tasks. Please try again.')).not.toBeInTheDocument();
+
+      consoleSpy.mockRestore();
+    });
+
+    it('has proper accessibility attributes', () => {
+      render(<TaskList />);
+
+      const sortButton = screen.getByRole('button', { name: /sort by priority/i });
+      expect(sortButton).toHaveAttribute('title', 'Sort tasks by priority (High → Medium → Low)');
     });
   });
 });
