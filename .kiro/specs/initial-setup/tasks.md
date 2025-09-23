@@ -128,7 +128,7 @@
   - Write integration tests for full application lifecycle
   - _Requirements: 4.1, 4.2, 4.4_
 
-- [ ] 16. Integrate all components into main application layout
+- [x] 16. Integrate all components into main application layout
   - Create main layout component that combines DoingView and PlanningDrawer
   - Wire up TodoContext provider at the application root
   - Implement proper component composition and data flow
