@@ -70,25 +70,23 @@ export default function PlanningDrawer({ isOpen, onClose, todos, onTodosChange }
     })
   }
 
-  if (!isOpen) return null
-
   return (
     <>
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/50 z-[60]"
+        className={`fixed inset-0 bg-black/50 z-[60] transition-opacity ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={onClose}
       />
       
       {/* Drawer */}
-      <div className="fixed left-0 top-0 h-full w-96 bg-gray-800 z-[61] shadow-2xl transform transition-transform">
+      <div className={`fixed left-0 top-0 h-full w-96 bg-surface z-[61] shadow-2xl transform transition-transform ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <div className="flex items-center justify-between p-4 border-b border-background">
             <h2 className="text-xl font-semibold">Planning</h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-background rounded-lg transition-colors"
             >
               <X size={20} />
             </button>
@@ -118,7 +116,7 @@ export default function PlanningDrawer({ isOpen, onClose, todos, onTodosChange }
                     onDragStart={() => handleDragStart(todo)}
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, todo)}
-                    className="bg-gray-700 rounded-lg p-3 cursor-move hover:bg-gray-600 transition-colors border-l-4"
+                    className="bg-background rounded-lg p-3 cursor-move hover:bg-purple-900 transition-colors border-l-4"
                     style={{ borderLeftColor: todo.color }}
                   >
                     <div className="flex items-start gap-3">
@@ -157,13 +155,13 @@ export default function PlanningDrawer({ isOpen, onClose, todos, onTodosChange }
                       <div className="flex gap-1">
                         <button
                           onClick={() => handleEditTodo(todo)}
-                          className="p-1.5 hover:bg-gray-600 rounded transition-colors"
+                          className="p-1.5 hover:bg-secondary rounded transition-colors"
                         >
                           <Edit2 size={14} />
                         </button>
                         <button
                           onClick={() => handleDeleteTodo(todo.id)}
-                          className="p-1.5 hover:bg-gray-600 rounded transition-colors text-red-400"
+                          className="p-1.5 hover:bg-secondary rounded transition-colors text-red-400"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -187,7 +185,7 @@ export default function PlanningDrawer({ isOpen, onClose, todos, onTodosChange }
                   {completedTodos.map((todo) => (
                     <div
                       key={todo.id}
-                      className="bg-gray-700/50 rounded-lg p-3 opacity-60"
+                      className="bg-background/50 rounded-lg p-3 opacity-60"
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex-1">
@@ -195,7 +193,7 @@ export default function PlanningDrawer({ isOpen, onClose, todos, onTodosChange }
                         </div>
                         <button
                           onClick={() => handleDeleteTodo(todo.id)}
-                          className="p-1.5 hover:bg-gray-600 rounded transition-colors text-red-400"
+                          className="p-1.5 hover:bg-secondary rounded transition-colors text-red-400"
                         >
                           <Trash2 size={14} />
                         </button>

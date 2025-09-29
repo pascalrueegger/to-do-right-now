@@ -11,7 +11,7 @@ interface TodoFormProps {
 }
 
 const COLORS = [
-  '#3B82F6', // blue
+  '#0b429aff', // blue
   '#EF4444', // red
   '#10B981', // green
   '#F59E0B', // yellow
@@ -86,14 +86,14 @@ export default function TodoForm({ todo, onClose }: TodoFormProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto relative z-[71]">
-        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+      <div className="bg-surface rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto relative z-[71]">
+        <div className="flex items-center justify-between p-4 border-b border-background">
           <h3 className="text-lg font-semibold">
             {todo ? 'Edit Todo' : 'Add New Todo'}
           </h3>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-background rounded-lg transition-colors"
           >
             <X size={20} />
           </button>
@@ -107,7 +107,7 @@ export default function TodoForm({ todo, onClose }: TodoFormProps) {
               type="text"
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-background border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="What needs to be done?"
               required
             />
@@ -119,7 +119,7 @@ export default function TodoForm({ todo, onClose }: TodoFormProps) {
             <textarea
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full bg-background border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
               rows={3}
               placeholder="Add more details..."
             />
@@ -131,7 +131,7 @@ export default function TodoForm({ todo, onClose }: TodoFormProps) {
             <select
               value={formData.priority}
               onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as 'low' | 'medium' | 'high' }))}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-background border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -172,7 +172,7 @@ export default function TodoForm({ todo, onClose }: TodoFormProps) {
                 ...prev,
                 dueDate: e.target.value ? new Date(e.target.value) : undefined
               }))}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-background border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -188,7 +188,7 @@ export default function TodoForm({ todo, onClose }: TodoFormProps) {
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagInputKeyDown}
-                className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 bg-background border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Add a tag..."
               />
               <button
@@ -204,7 +204,7 @@ export default function TodoForm({ todo, onClose }: TodoFormProps) {
                 {formData.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1 px-2 py-1 bg-gray-600 rounded text-sm"
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-background rounded text-sm"
                   >
                     {tag}
                     <button
@@ -225,13 +225,13 @@ export default function TodoForm({ todo, onClose }: TodoFormProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors"
+              className="flex-1 px-4 py-2 border border-gray-600 rounded-lg hover:bg-background transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-purple-700 hover:bg-purple-800 rounded-lg transition-colors"
+              className="flex-1 px-4 py-2 bg-primary hover:bg-secondary rounded-lg transition-colors"
             >
               {todo ? 'Update' : 'Create'}
             </button>

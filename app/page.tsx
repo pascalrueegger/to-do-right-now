@@ -1,162 +1,110 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Menu, Plus, Check, Clock, Tag } from 'lucide-react'
-import { Todo } from '@/types/todo'
-import { storage } from '@/lib/storage'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Menu } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import PlanningDrawer from '@/components/PlanningDrawer'
+import { storage } from '@/lib/storage'
+import { Todo } from '@/types/todo'
 
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([])
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [currentTodo, setCurrentTodo] = useState<Todo | null>(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   useEffect(() => {
-    const loadedTodos = storage.getTodos()
-    setTodos(loadedTodos)
-    
-    // Find the first incomplete todo as current
-    const nextTodo = loadedTodos
-      .filter(todo => !todo.completed)
-      .sort((a, b) => a.order - b.order)[0]
-    
-    setCurrentTodo(nextTodo || null)
+    loadTodos()
   }, [])
 
-  const handleCompleteCurrentTodo = () => {
+  const loadTodos = () => {
+    const allTodos = storage.getTodos()
+    setTodos(allTodos)
+    const incompleteTodos = allTodos.filter(t => !t.completed).sort((a, b) => a.order - b.order)
+    setCurrentTodo(incompleteTodos[0] || null)
+  }
+
+  const handleCompleteTodo = () => {
     if (!currentTodo) return
-    
-    storage.updateTodo(currentTodo.id, { completed: true })
-    const updatedTodos = storage.getTodos()
-    setTodos(updatedTodos)
-    
-    // Find next todo
-    const nextTodo = updatedTodos
-      .filter(todo => !todo.completed)
-      .sort((a, b) => a.order - b.order)[0]
-    
-    setCurrentTodo(nextTodo || null)
+
+    storage.updateTodo(currentTodo.id, { completed: true, completedDate: new Date() })
+    loadTodos()
   }
 
-  const refreshTodos = () => {
-    const updatedTodos = storage.getTodos()
-    setTodos(updatedTodos)
-    
-    if (!currentTodo || currentTodo.completed) {
-      const nextTodo = updatedTodos
-        .filter(todo => !todo.completed)
-        .sort((a, b) => a.order - b.order)[0]
-      
-      setCurrentTodo(nextTodo || null)
-    }
-  }
-
-  const formatDueDate = (date: Date) => {
-    const now = new Date()
-    const diffTime = date.getTime() - now.getTime()
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    
-    if (diffDays === 0) return 'Due today'
-    if (diffDays === 1) return 'Due tomorrow'
-    if (diffDays < 0) return `Overdue by ${Math.abs(diffDays)} days`
-    return `Due in ${diffDays} days`
+  const handleSkipTodo = () => {
+    if (!currentTodo) return
+    // Move to end of the list
+    const incompleteTodos = todos.filter(t => !t.completed).sort((a, b) => a.order - b.order)
+    const maxOrder = incompleteTodos.length > 0 ? Math.max(...incompleteTodos.map(t => t.order)) : 0
+    storage.updateTodo(currentTodo.id, { order: maxOrder + 1 })
+    loadTodos()
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white relative">
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 border-b border-gray-800">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground p-8 relative overflow-hidden">
+      <div className="absolute top-5 right-5">
         <button
           onClick={() => setIsDrawerOpen(true)}
-          className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+          className="p-3 bg-surface rounded-full shadow-lg hover:bg-secondary transition-colors"
         >
           <Menu size={24} />
         </button>
-        <h1 className="text-xl font-semibold">Todo Right Now</h1>
-        <div className="w-10" />
-      </header>
+      </div>
 
-      {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center p-8">
+      <AnimatePresence>
         {currentTodo ? (
-          <div className="max-w-2xl w-full">
-            <div 
-              className="bg-gray-800 rounded-2xl p-8 shadow-2xl border-l-4"
-              style={{ borderLeftColor: currentTodo.color }}
-            >
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${
-                    currentTodo.priority === 'high' ? 'bg-red-500/20 text-red-400' :
-                    currentTodo.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                    'bg-green-500/20 text-green-400'
-                  }`}>
-                    {currentTodo.priority.toUpperCase()}
-                  </span>
-                  {currentTodo.dueDate && (
-                    <div className="flex items-center gap-1 text-gray-400 text-sm">
-                      <Clock size={14} />
-                      <span>{formatDueDate(currentTodo.dueDate)}</span>
-                    </div>
-                  )}
-                </div>
-                <h2 className="text-3xl font-bold mb-4">{currentTodo.title}</h2>
-                {currentTodo.description && (
-                  <p className="text-gray-300 text-lg leading-relaxed mb-4">
-                    {currentTodo.description}
-                  </p>
-                )}
-                {currentTodo.tags.length > 0 && (
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Tag size={16} className="text-gray-400" />
-                    {currentTodo.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="px-2 py-1 bg-gray-700 rounded text-sm text-gray-300"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              <button
-                onClick={handleCompleteCurrentTodo}
-                className="w-full bg-green-800 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+          <motion.div
+            key={currentTodo.id}
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -50, scale: 0.9 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-md bg-surface rounded-2xl shadow-2xl p-8 text-center"
+          >
+            <h1 className="text-4xl font-bold mb-2">{currentTodo.title}</h1>
+            {currentTodo.description && (
+              <p className="text-lg text-gray-400 mb-6">{currentTodo.description}</p>
+            )}
+            
+            <div className="flex justify-center gap-4 mt-8">
+              <button 
+                onClick={handleCompleteTodo}
+                className="bg-primary hover:bg-secondary text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
-                <Check size={20} />
-                Mark as Complete
+                Done
+              </button>
+              <button 
+                onClick={handleSkipTodo}
+                className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                Skip
               </button>
             </div>
-          </div>
+          </motion.div>
         ) : (
-          <div className="text-center">
-            <div className="mb-8">
-              <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check size={48} className="text-green-500" />
-              </div>
-              <h2 className="text-2xl font-bold mb-2">All done!</h2>
-              <p className="text-gray-400">You have no pending tasks right now.</p>
-            </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <h1 className="text-4xl font-bold mb-4">All done!</h1>
+            <p className="text-lg text-gray-400">You've completed all your tasks for now.</p>
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="bg-purple-700 hover:bg-purple-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center gap-2 mx-auto"
+              className="mt-8 bg-primary hover:bg-secondary text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              <Plus size={20} />
-              Add New Todo
+              Add More Todos
             </button>
-          </div>
+          </motion.div>
         )}
-      </main>
+      </AnimatePresence>
 
-      {/* Planning Drawer */}
-      <PlanningDrawer
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+      <PlanningDrawer 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
         todos={todos}
-        onTodosChange={refreshTodos}
+        onTodosChange={loadTodos}
       />
-    </div>
+    </main>
   )
 }
